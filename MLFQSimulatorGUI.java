@@ -37,34 +37,86 @@ public class MLFQSimulatorGUI extends JFrame {
         setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(null);
 
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(6, 2, 10, 10));
+        inputPanel.setBounds(0, 0, 784, 188);
 
         processField = new JTextField();
+        processField.setBounds(150, 45, 150, 25);
         arrivalTimeField = new JTextField();
+        arrivalTimeField.setBounds(150, 75, 150, 25);
         burstTimeField = new JTextField();
+        burstTimeField.setBounds(150, 105, 150, 25);
         timeQuantumField = new JTextField();
+        timeQuantumField.setBounds(150, 135, 150, 25);
+        inputPanel.setLayout(null);
 
-        inputPanel.add(new JLabel("Process ID:"));
+        JLabel lblProcess = new JLabel("Process ID:");
+        lblProcess.setBounds(80, 45, 70, 25);
+        lblProcess.setFont(new Font("Tahoma", Font.BOLD, 12));
+        inputPanel.add(lblProcess);
         inputPanel.add(processField);
-        inputPanel.add(new JLabel("Arrival Time:"));
+        JLabel lblArrivalTime = new JLabel("Arrival Time:");
+        lblArrivalTime.setBounds(73, 75, 75, 25);
+        lblArrivalTime.setFont(new Font("Tahoma", Font.BOLD, 12));
+        inputPanel.add(lblArrivalTime);
         inputPanel.add(arrivalTimeField);
-        inputPanel.add(new JLabel("Burst Time:"));
+        JLabel lblBurstTime = new JLabel("Burst Time:");
+        lblBurstTime.setBounds(78, 105, 70, 25);
+        lblBurstTime.setFont(new Font("Tahoma", Font.BOLD, 12));
+        inputPanel.add(lblBurstTime);
         inputPanel.add(burstTimeField);
-        inputPanel.add(new JLabel("Time Quantum for RR:"));
+        JLabel lblTimeQuantum = new JLabel("Time Quantum for RR:");
+        lblTimeQuantum.setBounds(10, 135, 140, 25);
+        lblTimeQuantum.setFont(new Font("Tahoma", Font.BOLD, 12));
+        inputPanel.add(lblTimeQuantum);
         inputPanel.add(timeQuantumField);
 
         addProcessButton = new JButton("Add Process");
+        addProcessButton.setBackground(new Color(255, 255, 255));
+        addProcessButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        addProcessButton.setBounds(360, 135, 130, 23);
         runButton = new JButton("Run Scheduler");
+        runButton.setBackground(new Color(255, 255, 255));
+        runButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        runButton.setBounds(500, 135, 130, 23);
         resetButton = new JButton("Reset");
+        resetButton.setBackground(new Color(0, 0, 0));
+        resetButton.setForeground(new Color(255, 255, 255));
+        resetButton.setFont(new Font("Tahoma", Font.BOLD, 12));
+        resetButton.setBounds(640, 135, 100, 25);
 
         inputPanel.add(addProcessButton);
         inputPanel.add(runButton);
         inputPanel.add(resetButton);
 
-        add(inputPanel, BorderLayout.NORTH);
+        getContentPane().add(inputPanel);
+        
+        JLabel lblHeader = new JLabel("MULTILEVEL FEEDBACK QUEUE SCHEDULER SIMULATOR");
+        lblHeader.setFont(new Font("Nirmala UI", Font.BOLD, 17));
+        lblHeader.setBounds(320, 10, 460, 30);
+        inputPanel.add(lblHeader);
+        
+        JLabel lblDesc1 = new JLabel("This simulator demonstrates process scheduling using three main algorithms:");
+        lblDesc1.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
+        lblDesc1.setBounds(320, 35, 450, 15);
+        inputPanel.add(lblDesc1);
+        
+        JLabel lblFCFS = new JLabel("• FCFS (First-Come, First-Served) - Processes are executed in the order they arrive.");
+        lblFCFS.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
+        lblFCFS.setBounds(330, 50, 430, 15);
+        inputPanel.add(lblFCFS);
+        
+        JLabel lblSJF = new JLabel("• SJF (Shortest Job First) - Processes with shorter burst times are given priority.");
+        lblSJF.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
+        lblSJF.setBounds(330, 68, 420, 15);
+        inputPanel.add(lblSJF);
+        
+        JLabel lblRR = new JLabel("• RR (Round Robin) - Processes are given a fixed time quantum for execution.");
+        lblRR.setFont(new Font("Nirmala UI", Font.PLAIN, 12));
+        lblRR.setBounds(330, 86, 420, 15);
+        inputPanel.add(lblRR);
 
         tableModel = new DefaultTableModel();
         tableModel.addColumn("Process");
@@ -76,7 +128,9 @@ public class MLFQSimulatorGUI extends JFrame {
         tableModel.addColumn("Algorithm");
 
         JTable table = new JTable(tableModel);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(0, 188, 784, 273);
+        getContentPane().add(scrollPane);
 
         addProcessButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
