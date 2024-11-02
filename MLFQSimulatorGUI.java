@@ -196,13 +196,14 @@ public class MLFQSimulatorGUI extends JFrame {
         burstTimeField.setText("");
         timeQuantumField.setText("");
     }
-
+    
     private void scheduleProcesses(List<Process> processes) {
         int time = 0;
-        Queue<Process> queue1 = new LinkedList<>();
+        Queue<Process> queue1 = new LinkedList<>();  // RR
         Queue<Process> queue2 = new PriorityQueue<>(Comparator.comparingInt(p -> p.remainingTime)); // SJF
-        Queue<Process> queue3 = new LinkedList<>(); // FCFS
+        Queue<Process> queue3 = new LinkedList<>();  // FCFS
 
+        // Initially add processes to queue1 based on arrival time
         for (Process process : processes) {
             if (process.arrivalTime <= time) {
                 queue1.add(process);
@@ -211,6 +212,7 @@ public class MLFQSimulatorGUI extends JFrame {
 
         while (!queue1.isEmpty() || !queue2.isEmpty() || !queue3.isEmpty()) {
             if (!queue1.isEmpty()) {
+                // Round Robin
                 Process p = queue1.poll();
                 p.algorithmUsed = "Round Robin";
                 int execTime = Math.min(timeQuantum, p.remainingTime);
@@ -218,18 +220,27 @@ public class MLFQSimulatorGUI extends JFrame {
                 p.remainingTime -= execTime;
 
                 if (p.remainingTime > 0) {
-                    queue2.add(p); // Move to the next queue
+                    queue2.add(p); // Move to SJF if not finished
                 } else {
                     p.completionTime = time;
                 }
 
             } else if (!queue2.isEmpty()) {
+                // Shortest Job First
                 Process p = queue2.poll();
                 p.algorithmUsed = "SJF";
-                time += p.remainingTime;
-                p.remainingTime = 0;
-                p.completionTime = time;
+                int execTime = p.remainingTime;
+                time += execTime;
+                p.remainingTime -= execTime;
+
+                if (p.remainingTime > 0) {
+                    queue3.add(p); // Move to FCFS if not finished
+                } else {
+                    p.completionTime = time;
+                }
+
             } else if (!queue3.isEmpty()) {
+                // FCFS
                 Process p = queue3.poll();
                 p.algorithmUsed = "FCFS";
                 time += p.remainingTime;
@@ -237,18 +248,24 @@ public class MLFQSimulatorGUI extends JFrame {
                 p.completionTime = time;
             }
 
+         // Dynamically add new processes to the queues based on arrival time and availability
             for (Process process : processes) {
                 if (process.arrivalTime <= time && process.remainingTime > 0 &&
                     !queue1.contains(process) && !queue2.contains(process) && !queue3.contains(process)) {
-                    queue1.add(process);
+                    // Check queues to add to the lowest available
+                    if (queue1.isEmpty()) {
+                        queue1.add(process);
+                    } else if (queue2.isEmpty()) {
+                        queue2.add(process);
+                    } else {
+                        queue3.add(process);
+                    }
                 }
             }
-
-            while (!queue2.isEmpty() && queue2.peek().remainingTime > 0) {
-                queue3.add(queue2.poll());
-            }
+            
         }
 
+        // Calculate turnaround time and waiting time for each process
         for (Process process : processes) {
             process.turnaroundTime = process.completionTime - process.arrivalTime;
             process.waitingTime = process.turnaroundTime - process.burstTime;
